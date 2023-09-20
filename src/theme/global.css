@@ -4,6 +4,11 @@
     box-sizing: border-box;
   }
 
-.buttom-style-color {
-  background: radial-gradient(circle, #f8ccc3, #D6C1EE);
+.button-with-gradient {
+  background: linear-gradient(to right, #ff6b6b, #ffa07a); /* Substitua as cores de gradiente conforme necessário */
+  border: none; /* Remova a borda padrão se necessário */
+  color: #fff; /* Cor do texto */
+  border-radius: 5px; /* Arredondamento de borda, se aplicável */
+  cursor: pointer; /* Altere o cursor para indicar que é clicável */
 }
+

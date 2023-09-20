@@ -7,8 +7,8 @@ export function Users() {
             <Row style={{ justifyContent: "space-between" }}>
                 <Typography.Title level={4}>{"Lista de Usuários"}</Typography.Title>
                 <Col>
-                    <Button className="buttom-style-color" type="default" shape="round" icon={<PlusOutlined />} />
-                    <Button className="buttom-style-color" style={{ marginLeft: 5 }} type="default" shape="round" icon={<RedoOutlined />} />
+                    <Button className="button-with-gradient" type="default" shape="round" icon={<PlusOutlined />} />
+                    <Button className="button-with-gradient" style={{ marginLeft: 5 }} type="default" shape="round" icon={<RedoOutlined />} />
                 </Col>
             </Row>
             <Table
