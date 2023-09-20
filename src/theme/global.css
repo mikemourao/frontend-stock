@@ -3,3 +3,7 @@
     padding: 0;
     box-sizing: border-box;
   }
+
+.buttom-style-color {
+  background: radial-gradient(circle, #f8ccc3, #D6C1EE);
+}

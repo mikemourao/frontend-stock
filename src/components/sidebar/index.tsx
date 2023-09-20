@@ -6,7 +6,7 @@ import SubMenu from "../../components/sub-menu/index";
 import ISidebar from "../../components/sidebar/interface/index";
 import { Link, useLocation } from "react-router-dom";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
-import logoImage from "../../../public/vite.svg"; // Importe a imagem do logotipo
+import logoImage from "../../assets/logo_user.png"; // Importe a imagem do logotipo
 
 const { useBreakpoint } = Grid;
 
@@ -69,7 +69,7 @@ export function Index(props: ISidebar) {
       fixed={!screens.md}
     >
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <img alt="Logo" src={logoImage} width={100} height={61} />
+        <img alt="Logo" src={logoImage} width={90} height={80} />
       </div>
       <Menu
         defaultSelectedKeys={["1"]}

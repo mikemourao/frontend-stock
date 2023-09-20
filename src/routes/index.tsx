@@ -4,7 +4,6 @@ import Reports from "../pages/reports";
 import NotFound from '../pages/notFound/index';
 import { App } from '../components/templates/App';
 
-
 const AppRoutes = createBrowserRouter([
   {
     path: "/",

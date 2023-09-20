@@ -18,23 +18,11 @@ export const Content = styled(Layout.Content)`
 export const Header = styled(Layout.Header)`
   padding-left: 16px;
   padding-right: 16px;
-  background-color: ${Colors.backgroundColor};
+  background-color: ${Colors.backgroundColorHeader};
   position: relative; /* Necessário para posicionar o pseudo-elemento */
   width: 100%;
   z-index: 10;
   height: 56px;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: linear-gradient(to right, ${Colors.borderColorStart}, ${Colors.borderColorEnd});
-    opacity: 0.5; /* Ajuste a opacidade conforme necessário */
-    z-index: -1; /* Coloca o pseudo-elemento atrás do conteúdo do Header */
-  }
 `;
 
 export const RightHeader = styled(Col)`

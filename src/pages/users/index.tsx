@@ -1,25 +1,44 @@
+import { Button, Col, Row, Table, Typography } from "antd";
+import { PlusOutlined, RedoOutlined } from '@ant-design/icons';
 
 export function Users() {
-
     return (
         <div style={{ padding: 32 }}>
-            
-        <h1 style={{ fontSize: 35}}>Para maiores dúvidas, <br></br>entre em contato com a nossa equipe de suporte!</h1>
-
-        <div style={{ padding: 32 }}>
-            <h1 style={{ fontSize: 20}}>1º Turno</h1>
-            <h1>Marvin Rocha</h1>
-            <a style={{ padding: 10 }} href="mailto:marvin.rocha@grupoicts.com.br">marvin.rocha@grupoicts.com.br</a>
-            <h1 style={{ fontSize: 20, marginTop: 5}}>2º Turno</h1>
-            <h1>Kevlan Betto</h1>
-            <a style={{ padding: 10 }} href="mailto:kevlan.costa@grupoicts.com.br">kevlan.costa@grupoicts.com.br</a>
-            <h1 style={{ fontSize: 20, marginTop: 5}}>3º Turno</h1>
-            <h1>Francisco Neto</h1>
-            <a style={{ padding: 10 }} href="mailto:francisco.neto@grupoicts.com.br">francisco.neto@grupoicts.com.br</a>
+            <Row style={{ justifyContent: "space-between" }}>
+                <Typography.Title level={4}>{"Lista de Usuários"}</Typography.Title>
+                <Col>
+                    <Button className="buttom-style-color" type="default" shape="round" icon={<PlusOutlined />} />
+                    <Button className="buttom-style-color" style={{ marginLeft: 5 }} type="default" shape="round" icon={<RedoOutlined />} />
+                </Col>
+            </Row>
+            <Table
+                columns={[
+                    {
+                        title: "ID",
+                        dataIndex: "id",
+                        key: "id",
+                    },
+                    {
+                        title: "Nome",
+                        dataIndex: "name",
+                        key: "name",
+                    }
+                ]}
+                dataSource={[
+                    {
+                        id: 1,
+                        name: "mike"
+                    },
+                    {
+                        id: 2,
+                        name: "bruna"
+                    }
+                ]}
+                size="small"
+                scroll={{ x: "max-content", y: 500 }}
+                pagination={false}
+            >
+            </Table>
         </div>
-
-        <p style={{ fontSize: 15}}>Nossa equipe de suporte está disponivel em turnos, favor contatar o profissional referente ao seu turno de trabalho.</p>
-        
-        </div> 
     )
 }
