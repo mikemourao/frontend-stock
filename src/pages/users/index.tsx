@@ -35,8 +35,7 @@ export function Users() {
                     }
                 ]}
                 size="small"
-                scroll={{ x: "max-content", y: 500 }}
-                pagination={false}
+                scroll={{ x: "max-content"}}
             >
             </Table>
         </div>
