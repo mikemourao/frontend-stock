@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Form, Input, Modal, Row, Table, Typography } from "antd";
-import { PlusOutlined, RedoOutlined } from '@ant-design/icons';
-import { listUsers } from "../../services/users";
+import { Button, Col, Form, Input, Modal, Row, Table, Typography, notification } from "antd";
+import { PlusOutlined, RedoOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
+import { listUsers, createUser } from "../../services/users";
 
 export function Users() {
     const [isLoading, setLoading] = useState(false);
@@ -27,7 +27,14 @@ export function Users() {
     const handleCreateUser = async (values: any) => {
         try {
             setLoading(true);
-            console.log(values);
+            const response = await createUser(values);
+            
+            if (response.status === 200) {
+                notification.success({message: "Cadastrado com Sucesso!"})
+                setReload(!reload)
+                setLoading(false)
+                hideModal()
+            }
 
         } catch (error) {
             console.log(error);
@@ -43,6 +50,7 @@ export function Users() {
     const hideModal = () => {
         forms.resetFields([
             "name",
+            "password",
         ]);
         setModal(false)
     };
@@ -80,7 +88,8 @@ export function Users() {
                 open={isModal}
                 onCancel={hideModal}
                 okText="Cadastrar"
-                okButtonProps={{ style:{background: '#ff6b6bc9'} }}
+                okButtonProps={{style:{display: "none"}}}
+                cancelButtonProps={{style:{display: "none"}}}
                 destroyOnClose
                 maskClosable={false}
                 closable={false}
@@ -91,8 +100,51 @@ export function Users() {
                     form={forms}
                     size="large"
                 >
+                    <Form.Item
+                        name={"name"}
+                        label={"Nome"}
+                        rules={[
+                            {
+                                required: true,
+                                message: "Campo Obrigatório!"
+                            }
+                        ]}
+                    >
+                        <Input type="text"></Input>
+                    </Form.Item>
+                    <Form.Item
+                        name={"password"}
+                        label={"Senha"}
+                        rules={[
+                            {
+                                required: true,
+                                message: "Campo Obrigatório!"
+                            }
+                        ]}
+                    >
+                        <Input.Password
+                            iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                        />
+
+                    </Form.Item>
                     <Form.Item>
-                        <Input></Input>
+                        <Button
+                            htmlType="submit"
+                            style={{
+                            float: "right",
+                            backgroundColor: "#ff6b6bc9",
+                            color: "white",
+                            }}
+                        >
+                            Cadastrar
+                        </Button>
+                        <Button
+                            htmlType="button"
+                            onClick={hideModal}
+                            style={{ float: "right", marginRight: "10px" }}
+                        >
+                            Cancelar
+                        </Button>
                     </Form.Item>
                 </Form>
             </Modal>
