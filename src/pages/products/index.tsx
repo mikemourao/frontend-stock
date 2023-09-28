@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Form, Input, Modal, Row, Table, Typography, notification } from "antd";
 import { PlusOutlined, RedoOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
-import { listUsers, createUser } from "../../services/users";
+import { listProducts } from "../../services/products";
 
-export function Users() {
+export function Products() {
     const [isLoading, setLoading] = useState(false);
     const [reload, setReload] = useState(false);
-    const [dataUsers, setUsers] = useState<any>([]);
+    const [dataProducts, setProducts] = useState<any>([]);
     const [isModal, setModal] = useState(false);
 
     const [forms] = Form.useForm();
 
     useEffect(() => {
         setLoading(true);
-        listUsers()
+        listProducts()
             .then((response) => {
-                setUsers(response.data);
+                setProducts(response.data);
                 setLoading(false);
             })
             .catch((error) => {
@@ -27,14 +27,16 @@ export function Users() {
     const handleCreateUser = async (values: any) => {
         try {
             setLoading(true);
-            const response = await createUser(values);
+            console.log('values', values);
+            
+            // const response = await createUser(values);
 
-            if (response.status === 200) {
-                notification.success({ message: "Cadastrado com Sucesso!" })
-                setReload(!reload)
-                setLoading(false)
-                hideModal()
-            }
+            // if (response.status === 200) {
+            //     notification.success({ message: "Cadastrado com Sucesso!" })
+            //     setReload(!reload)
+            //     setLoading(false)
+            //     hideModal()
+            // }
 
         } catch (error) {
             console.log(error);
@@ -43,7 +45,7 @@ export function Users() {
     };
 
     const handleReload = () => {
-        setUsers([]);
+        setProducts([]);
         setReload(!reload);
     };
 
@@ -58,7 +60,7 @@ export function Users() {
     return (
         <div style={{ padding: 32 }}>
             <Row style={{ justifyContent: "space-between" }}>
-                <Typography.Title level={4}>{"Lista de Usuários"}</Typography.Title>
+                <Typography.Title level={4}>{"Lista de Materiais"}</Typography.Title>
                 <Col>
                     <Button className="button-with-gradient" type="default" shape="round" icon={<PlusOutlined />} onClick={() => setModal(true)} />
                     <Button className="button-with-gradient" style={{ marginLeft: 5 }} type="default" shape="round" icon={<RedoOutlined />} onClick={handleReload} />
@@ -72,19 +74,35 @@ export function Users() {
                         key: "id",
                     },
                     {
-                        title: "Nome",
-                        dataIndex: "name",
-                        key: "name",
+                        title: "Produto",
+                        dataIndex: "product_name",
+                        key: "product_name",
+                    },
+                    {
+                        title: "Tipo",
+                        dataIndex: "type",
+                        key: "type",
+                    },
+                    {
+                        title: "Tamanho",
+                        dataIndex: "size",
+                        key: "size",
+                    },
+                    {
+                        title: "Custo",
+                        dataIndex: "cost",
+                        key: "cost",
+                        render: (text: any) => `R$ ${text}`
                     }
                 ]}
-                dataSource={dataUsers}
+                dataSource={dataProducts}
                 size="small"
                 scroll={{ x: "max-content" }}
                 loading={isLoading}
             >
             </Table>
             <Modal
-                title="Cadastro de Usuário"
+                title="Cadastro de Materiais"
                 open={isModal}
                 onCancel={hideModal}
                 okText="Cadastrar"
