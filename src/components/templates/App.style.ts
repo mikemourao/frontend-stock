@@ -30,3 +30,8 @@ export const RightHeader = styled(Col)`
     justify-content: flex-end;
     align-self: center;
 `;
+
+export const IconWrapperCenter = styled.div`
+    display: flex;
+    justify-content: center;
+`;

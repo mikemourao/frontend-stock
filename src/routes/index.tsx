@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { Navigate, createBrowserRouter } from 'react-router-dom';
 import { Users } from "../pages/users";
 import { Products } from "../pages/products";
 import Reports from "../pages/reports";
@@ -24,6 +24,10 @@ const AppRoutes = createBrowserRouter([
         element: <Reports />
       },
     ]
+  },
+  {
+    path: "*",
+    element: <Navigate to="/users" />
   }
 ])
 

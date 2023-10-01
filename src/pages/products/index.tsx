@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Form, Input, Modal, Row, Table, Typography, notification } from "antd";
-import { PlusOutlined, RedoOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
-import { listProducts } from "../../services/products";
+import { Button, Col, Form, Input, Modal, Row, Select, Table, Typography, notification, Popconfirm } from "antd";
+import { PlusOutlined, RedoOutlined, DeleteOutlined } from '@ant-design/icons';
+import { listProducts, createProducts, deleteProduct } from "../../services/products";
+import { IconWrapperCenter } from "../../components/templates/App.style";
 
 export function Products() {
     const [isLoading, setLoading] = useState(false);
@@ -24,19 +25,33 @@ export function Products() {
             });
     }, [reload]);
 
-    const handleCreateUser = async (values: any) => {
+    const handleCreateProduct = async (values: any) => {
         try {
             setLoading(true);
-            console.log('values', values);
-            
-            // const response = await createUser(values);
+            const response = await createProducts(values);
+            if (response.status === 200) {
+                notification.success({ message: "Cadastrado com Sucesso!" })
+                setReload(!reload)
+                setLoading(false)
+                hideModal()
+            }
 
-            // if (response.status === 200) {
-            //     notification.success({ message: "Cadastrado com Sucesso!" })
-            //     setReload(!reload)
-            //     setLoading(false)
-            //     hideModal()
-            // }
+        } catch (error) {
+            console.log(error);
+            setLoading(false);
+        }
+    };
+
+    const handleDeleteProduct = async (record: any) => {
+        try {
+            setLoading(true);
+            const response = await deleteProduct(record);
+            if (response.status === 200) {
+                notification.success({ message: "Excluido com Sucesso!" })
+                setReload(!reload)
+                setLoading(false)
+                hideModal()
+            }
 
         } catch (error) {
             console.log(error);
@@ -51,8 +66,10 @@ export function Products() {
 
     const hideModal = () => {
         forms.resetFields([
-            "name",
-            "password",
+            "product_name",
+            "type",
+            "size",
+            "cost"
         ]);
         setModal(false)
     };
@@ -93,7 +110,28 @@ export function Products() {
                         dataIndex: "cost",
                         key: "cost",
                         render: (text: any) => `R$ ${text}`
-                    }
+                    },
+                    {
+                        title: "Opções",
+                        dataIndex: "options",
+                        key: "options",
+                        align: "center",
+                        render: (text: any, record: any) => {
+                          return (
+                            <IconWrapperCenter>
+                              <Popconfirm
+                                title={"Deseja realmente excluir este Material?"}
+                                onConfirm={() => handleDeleteProduct(record.id)}
+                                placement="leftBottom"
+                                okText="Sim"
+                                cancelText="Não"
+                              >
+                                <Button icon={<DeleteOutlined />} type="text" />
+                              </Popconfirm>
+                            </IconWrapperCenter>
+                          );
+                        },
+                    },
                 ]}
                 dataSource={dataProducts}
                 size="small"
@@ -113,14 +151,14 @@ export function Products() {
                 closable={false}
             >
                 <Form
-                    onFinish={handleCreateUser}
+                    onFinish={handleCreateProduct}
                     layout="vertical"
                     form={forms}
                     size="large"
                 >
                     <Form.Item
-                        name={"name"}
-                        label={"Nome"}
+                        name={"product_name"}
+                        label={"Produto"}
                         rules={[
                             {
                                 required: true,
@@ -131,8 +169,8 @@ export function Products() {
                         <Input type="text"></Input>
                     </Form.Item>
                     <Form.Item
-                        name={"password"}
-                        label={"Senha"}
+                        name={"type"}
+                        label={"Tipo"}
                         rules={[
                             {
                                 required: true,
@@ -140,10 +178,38 @@ export function Products() {
                             }
                         ]}
                     >
-                        <Input.Password
-                            iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
-                        />
-
+                        <Select>
+                            <option value={"Normal"}>{"Normal"}</option>
+                            <option value={"Especial"}>{"Especial"}</option>
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
+                        name={"size"}
+                        label={"Tamanho"}
+                        rules={[
+                            {
+                                required: true,
+                                message: "Campo Obrigatório!"
+                            }
+                        ]}
+                    >
+                        <Select>
+                            <option value={"P"}>{"P"}</option>
+                            <option value={"M"}>{"M"}</option>
+                            <option value={"G"}>{"G"}</option>
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
+                        name={"cost"}
+                        label={"Custo (R$)"}
+                        rules={[
+                            {
+                                required: true,
+                                message: "Campo Obrigatório!"
+                            }
+                        ]}
+                    >
+                        <Input type="number" step="0.01" ></Input>
                     </Form.Item>
                     <Form.Item>
                         <Button
