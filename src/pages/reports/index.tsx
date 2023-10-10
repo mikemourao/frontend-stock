@@ -1,10 +1,28 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Form, Input, Modal, Row, Select, Space, Table, Typography } from "antd";
-import { PlusOutlined, RedoOutlined, MinusCircleOutlined } from '@ant-design/icons';
+import { Button, Col, Form, Input, Modal, Row, Select, Space, Steps, Table, Typography, message, theme } from "antd";
+import { PlusOutlined, RedoOutlined, DeleteOutlined } from '@ant-design/icons';
 import { listProducts } from "../../services/products";
 const { Paragraph } = Typography;
 
 export function Reports() {
+  const { token } = theme.useToken();
+  const [current, setCurrent] = useState(0);
+
+  const next = async () => {
+    try {
+      await forms.validateFields(); // This ensures the form is validated before moving to the next step
+      setCurrent(current + 1);
+      const values = await forms.getFieldsValue();
+      handleCreateReport(values);
+    } catch (error) {
+      console.error('Form validation failed:', error);
+    }
+  };
+
+  const prev = () => {
+    setCurrent(current - 1);
+  };
+
   const [isLoading, setLoading] = useState(false);
   const [reload, setReload] = useState(false);
   const [dataReports, setReports] = useState<any>([]);
@@ -12,8 +30,6 @@ export function Reports() {
   const [isModal, setModal] = useState(false);
   const [dataQtde, setQtde] = useState<Number>(0);
   const [isChangeQtde, handleChangeQtde] = useState(false);
-
-  console.log('dataQtde', dataQtde);
 
   const [forms] = Form.useForm();
 
@@ -34,7 +50,6 @@ export function Reports() {
   const handleCreateReport = async (values: any) => {
     try {
       setLoading(true);
-      // console.log('prod', dataProduct);
       console.log('form', values);
     } catch (error) {
       console.log(error);
@@ -49,10 +64,12 @@ export function Reports() {
 
   const hideModal = () => {
     forms.resetFields([
+      "report_name",
       "qtde",
       "product_name",
       "products"
     ]);
+    current !== 0 ? prev() : console.log('nada');    
     setModal(false)
     handleChangeQtde(false)
   };
@@ -76,6 +93,102 @@ export function Reports() {
       setQtde(newQtde)
       handleChangeQtde(true)
     }, 2000);
+  };
+
+  const steps = [
+    {
+      title: 'Simulação',
+      content:
+        <>
+          <Form
+            onFinish={handleCreateReport}
+            layout="vertical"
+            form={forms}
+            size="large"
+            style={{ margin: 5}}
+          >
+            <Form.Item
+              name={"report_name"}
+              label={"Nome do Relatório"}
+              rules={[
+                {
+                  required: true,
+                  message: "Campo Obrigatório!"
+                }
+              ]}
+            >
+              <Input></Input>
+            </Form.Item>
+            <Form.Item
+              name={"qtde"}
+              label={"Quantidade"}
+              rules={[
+                {
+                  required: true,
+                  message: "Campo Obrigatório!"
+                }
+              ]}
+            >
+              <Input type="number" onChange={handleQtdeChange}></Input>
+            </Form.Item>
+            {
+              isChangeQtde && (
+                <>
+                  <Form.List name="products">
+                    {(fields, { add, remove }) => (
+                      <>
+                        <Typography.Paragraph>Materiais</Typography.Paragraph>
+                        {fields.map(({ key, name, ...resetField }) => (
+                          <Space key={key} style={{ margin: 5 }} align="baseline">
+                            <Form.Item
+                              {...resetField}
+                              name={[name, 'product_name']}
+                              rules={[{ required: true, message: 'Campo obrigatório!' }]}
+                            >
+                              <Select
+                                size="large"
+                                style={{ width: 200 }}
+                                maxTagCount="responsive"
+                                showSearch
+                                optionFilterProp="children"
+                              >
+                                {dataProduct.map((a: any, b: any) => (
+                                  <Select.Option value={a["id"]} key={a["id"]}>
+                                    {a["value"]}
+                                  </Select.Option>
+                                ))}
+                              </Select>
+                            </Form.Item>
+                            <DeleteOutlined style={{color: "red"}} onClick={() => remove(name)} />
+                          </Space>
+                        ))}
+                        <Form.Item>
+                          <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                            Add Material
+                          </Button>
+                        </Form.Item>
+                      </>
+                    )}
+                  </Form.List>
+                </>
+              )
+            }
+          </Form>
+        </>
+      ,
+    },
+    {
+      title: 'Registrar',
+      content: 'Second-content',
+    },
+  ];
+
+  const items = steps.map((item) => ({ key: item.title, title: item.title }));
+  const contentStyle: React.CSSProperties = {
+    lineHeight: '260px',
+    textAlign: 'center',
+    color: token.colorTextTertiary,
+    marginTop: 16,
   };
 
   return (
@@ -118,122 +231,38 @@ export function Reports() {
       >
       </Table>
       <Modal
-        title="Simulação/Cadastro de Orçamento"
         open={isModal}
         onCancel={hideModal}
+        onOk={handleCreateReport}
         okText="Salvar"
         okButtonProps={{ style: { display: "none" } }}
         cancelButtonProps={{ style: { display: "none" } }}
         destroyOnClose
         maskClosable={false}
-        closable={false}
+        closable={true}
+        width={'40%'}
       >
-        <Form
-          onFinish={handleCreateReport}
-          layout="vertical"
-          form={forms}
-          size="large"
-        >
-          <Form.Item
-            name={"report_name"}
-            label={"Nome do Relatório"}
-            rules={[
-              {
-                required: true,
-                message: "Campo Obrigatório!"
-              }
-            ]}
-          >
-            <Input></Input>
-          </Form.Item>
-          <Form.Item
-            name={"qtde"}
-            label={"Quantidade"}
-            rules={[
-              {
-                required: true,
-                message: "Campo Obrigatório!"
-              }
-            ]}
-          >
-            <Input width={'50%'} type="number" onChange={handleQtdeChange}></Input>
-          </Form.Item>
-          {
-            !isChangeQtde && (
-              <Form.Item>
-                <Button
-                  htmlType="button"
-                  onClick={hideModal}
-                  style={{ float: "right", marginRight: "10px" }}
-                >
-                  Cancelar
-                </Button>
-              </Form.Item>
-            )
-          }
-          {
-            isChangeQtde && (
-              <>
-                <Form.List name="products">
-                  {(fields, { add, remove }) => (
-                    <>
-                      <Typography.Paragraph>Materiais</Typography.Paragraph>
-                      {fields.map(({ key, name, ...resetField }) => (
-                        <Space key={key} style={{ display: 'flex', marginBottom: 8, width: '100%' }} align="baseline">
-                          <Form.Item
-                            {...resetField}
-                            name={[name, 'product_name']}
-                            rules={[{ required: true, message: 'Campo obrigatório!' }]}
-                            style={{ width: '100%' }}
-                          >
-                            <Select
-                              size="large"
-                              style={{ width: 450 }}
-                              maxTagCount="responsive"
-                              showSearch
-                              optionFilterProp="children"
-                            >
-                              {dataProduct.map((a: any, b: any) => (
-                                <Select.Option value={a["id"]} key={a["id"]}>
-                                  {a["value"]}
-                                </Select.Option>
-                              ))}
-                            </Select>
-                          </Form.Item>
-                          <MinusCircleOutlined onClick={() => remove(name)} />
-                        </Space>
-                      ))}
-                      <Form.Item>
-                        <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                          Add Material
-                        </Button>
-                      </Form.Item>
-                    </>
-                  )}
-                </Form.List>
-                <Form.Item>
-                  <Button
-                    htmlType="submit"
-                    style={{
-                      float: "right",
-                      backgroundColor: "#ff6b6bc9",
-                      color: "white",
-                    }}
-                  >
-                    Cadastrar
-                  </Button>
-                  <Button
-                    htmlType="button"
-                    onClick={hideModal}
-                    style={{ float: "right", marginRight: "10px" }}
-                  >
-                    Cancelar
-                  </Button>
-                </Form.Item>
-              </>
-            )
-          }
-        </Form>
+        <>
+          <Steps current={current} items={items} style={{marginTop: 20}}/>
+          <div style={contentStyle}>{steps[current].content}</div>
+          <div style={{ marginTop: 24 }}>
+            {current < steps.length - 1 && (
+              <Button type="primary" onClick={() => next()}>
+                Próximo
+              </Button>
+            )}
+            {current === steps.length - 1 && (
+              <Button type="primary" onClick={() => message.success('Processing complete!')}>
+                Salvar
+              </Button>
+            )}
+            {current > 0 && (
+              <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
+                Anterior
+              </Button>
+            )}
+          </div>
+        </>
       </Modal>
     </div>
   )
