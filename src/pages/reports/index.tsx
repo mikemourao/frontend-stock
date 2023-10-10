@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Col, Form, Input, Modal, Row, Select, Space, Steps, Table, Typography, message, theme } from "antd";
 import { PlusOutlined, RedoOutlined, DeleteOutlined } from '@ant-design/icons';
 import { listProducts } from "../../services/products";
+import { getProductID } from "../../services/reports"
 const { Paragraph } = Typography;
 
 export function Reports() {
@@ -30,7 +31,8 @@ export function Reports() {
   const [isModal, setModal] = useState(false);
   const [dataQtde, setQtde] = useState<Number>(0);
   const [isChangeQtde, handleChangeQtde] = useState(false);
-
+  const [productInfo, setProductInfo] = useState<any>([]);
+  
   const [forms] = Form.useForm();
 
   useEffect(() => {
@@ -50,12 +52,24 @@ export function Reports() {
   const handleCreateReport = async (values: any) => {
     try {
       setLoading(true);
-      console.log('form', values);
+  
+      const allData = [];
+  
+      for (let i = 0; i < productInfo.length; i++) {
+        const mergeData = {
+          ...productInfo[i].data.data,
+          ...values,
+        };
+        allData.push(mergeData);
+      }
+  
+      console.log('dataReport', allData);
     } catch (error) {
       console.log(error);
+    } finally {
       setLoading(false);
     }
-  };
+  };  
 
   const handleReload = () => {
     setReports([]);
@@ -94,6 +108,21 @@ export function Reports() {
       handleChangeQtde(true)
     }, 2000);
   };
+
+  const fetchProductInfo = async (productId: any) => {
+    try {
+      // Lógica para fazer a consulta usando o productId
+      const productData = await getProductID(productId);
+  
+      // Adicione um novo objeto ao estado
+      setProductInfo((prevProductInfo: any) => [
+        ...prevProductInfo,
+        { productId, data: productData },
+      ]);
+    } catch (error) {
+      console.log(error);
+    }
+  };   
 
   const steps = [
     {
@@ -151,6 +180,9 @@ export function Reports() {
                                 maxTagCount="responsive"
                                 showSearch
                                 optionFilterProp="children"
+                                onChange={(productId) => {
+                                  fetchProductInfo(productId);
+                                }}
                               >
                                 {dataProduct.map((a: any, b: any) => (
                                   <Select.Option value={a["id"]} key={a["id"]}>
