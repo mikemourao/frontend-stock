@@ -3,7 +3,6 @@ import { Button, Col, Form, Input, Modal, Row, Select, Space, Steps, Table, Typo
 import { PlusOutlined, RedoOutlined, DeleteOutlined } from '@ant-design/icons';
 import { listProducts } from "../../services/products";
 import { getProductID } from "../../services/reports"
-const { Paragraph } = Typography;
 
 export function Reports() {
   const { token } = theme.useToken();
@@ -27,12 +26,13 @@ export function Reports() {
   const [isLoading, setLoading] = useState(false);
   const [reload, setReload] = useState(false);
   const [dataReports, setReports] = useState<any>([]);
+  const [dataReport, setDataReport] = useState<any>([]);
   const [dataProduct, setProduct] = useState<any>([]);
   const [isModal, setModal] = useState(false);
   const [dataQtde, setQtde] = useState<Number>(0);
   const [isChangeQtde, handleChangeQtde] = useState(false);
   const [productInfo, setProductInfo] = useState<any>([]);
-  
+
   const [forms] = Form.useForm();
 
   useEffect(() => {
@@ -52,9 +52,8 @@ export function Reports() {
   const handleCreateReport = async (values: any) => {
     try {
       setLoading(true);
-  
+
       const allData = [];
-  
       for (let i = 0; i < productInfo.length; i++) {
         const mergeData = {
           ...productInfo[i].data.data,
@@ -62,14 +61,13 @@ export function Reports() {
         };
         allData.push(mergeData);
       }
-  
-      console.log('dataReport', allData);
+      setDataReport(allData)
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
-  };  
+  };
 
   const handleReload = () => {
     setReports([]);
@@ -83,7 +81,7 @@ export function Reports() {
       "product_name",
       "products"
     ]);
-    current !== 0 ? prev() : console.log('nada');    
+    current !== 0 ? prev() : console.log('nada');
     setModal(false)
     handleChangeQtde(false)
   };
@@ -113,7 +111,7 @@ export function Reports() {
     try {
       // Lógica para fazer a consulta usando o productId
       const productData = await getProductID(productId);
-  
+
       // Adicione um novo objeto ao estado
       setProductInfo((prevProductInfo: any) => [
         ...prevProductInfo,
@@ -122,7 +120,7 @@ export function Reports() {
     } catch (error) {
       console.log(error);
     }
-  };   
+  };
 
   const steps = [
     {
@@ -134,7 +132,7 @@ export function Reports() {
             layout="vertical"
             form={forms}
             size="large"
-            style={{ margin: 5}}
+            style={{ margin: 5 }}
           >
             <Form.Item
               name={"report_name"}
@@ -191,7 +189,7 @@ export function Reports() {
                                 ))}
                               </Select>
                             </Form.Item>
-                            <DeleteOutlined style={{color: "red"}} onClick={() => remove(name)} />
+                            <DeleteOutlined style={{ color: "red" }} onClick={() => remove(name)} />
                           </Space>
                         ))}
                         <Form.Item>
@@ -211,9 +209,52 @@ export function Reports() {
     },
     {
       title: 'Registrar',
-      content: 'Second-content',
+      content:
+        <>
+          <Table
+            columns={[
+              {
+                title: "Materia Prima",
+                dataIndex: "",
+                key: "",
+                render: ((text: any) => text[0]?.product_name)
+              },
+              {
+                title: "Tamanho",
+                dataIndex: "",
+                key: "",
+                render: ((text: any) => text[0]?.size)
+              },
+              {
+                title: "Tipo",
+                dataIndex: "",
+                key: "",
+                render: ((text: any) => text[0]?.type)
+              },
+              {
+                title: "Custo",
+                dataIndex: "",
+                key: "",
+                render: ((text: any) => `R$ ${text[0]?.cost}`)
+              },
+              {
+                title: "Custo de Produção",
+                dataIndex: "",
+                key: "",
+                render: ((text: any) => `R$ ${text[0]?.manufacturing_cost}`)
+              },
+            ]}
+            dataSource={dataReport}
+            size="small"
+            scroll={{ x: "max-content" }}
+            loading={isLoading}
+          >
+          </Table>
+        </>
+      ,
     },
   ];
+  console.log(dataReport);
 
   const items = steps.map((item) => ({ key: item.title, title: item.title }));
   const contentStyle: React.CSSProperties = {
@@ -275,7 +316,7 @@ export function Reports() {
         width={'40%'}
       >
         <>
-          <Steps current={current} items={items} style={{marginTop: 20}}/>
+          <Steps current={current} items={items} style={{ marginTop: 20 }} />
           <div style={contentStyle}>{steps[current].content}</div>
           <div style={{ marginTop: 24 }}>
             {current < steps.length - 1 && (
@@ -288,11 +329,11 @@ export function Reports() {
                 Salvar
               </Button>
             )}
-            {current > 0 && (
+            {/* {current > 0 && (
               <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
                 Anterior
               </Button>
-            )}
+            )} */}
           </div>
         </>
       </Modal>
