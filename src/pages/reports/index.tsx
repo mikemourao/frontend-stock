@@ -256,9 +256,10 @@ export function Reports() {
             loading={isLoading}
             footer={() => (
               <div style={{fontSize: 15}}>
-                <strong>Qtde. Produção:</strong> {dataQtde} <strong>|</strong>
-                <strong> Custo de Produção Total:</strong> R$ {totalManufacturingCost} <strong>|</strong> 
-                <strong> Valor a ser Cobrado:</strong> R$ {totalManufacturingCost * 0.3 + totalManufacturingCost}
+                <strong>Qtde. Prod.:</strong> {dataQtde} <strong>|</strong>
+                <strong> Custo Prod. Total:</strong> R$ {totalManufacturingCost} <strong>|</strong> 
+                <strong> Vl. por peça:</strong> R$ {totalManufacturingCost * 0.3 + totalManufacturingCost} <strong>|</strong>
+                <strong> Vl. Total(30%):</strong> R$ {(totalManufacturingCost * 0.3 + totalManufacturingCost)*dataQtde}
               </div>
             )}
           >
