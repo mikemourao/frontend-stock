@@ -29,7 +29,8 @@ export function Reports() {
   const [dataReport, setDataReport] = useState<any>([]);
   const [dataProduct, setProduct] = useState<any>([]);
   const [isModal, setModal] = useState(false);
-  const [dataQtde, setQtde] = useState<Number>(0);
+  const [dataQtde, setQtde] = useState<any>(0);
+  const [totalManufacturingCost, setTotalManufacturingCost] = useState<any>(0);
   const [isChangeQtde, handleChangeQtde] = useState(false);
   const [productInfo, setProductInfo] = useState<any>([]);
 
@@ -54,14 +55,19 @@ export function Reports() {
       setLoading(true);
 
       const allData = [];
-      for (let i = 0; i < productInfo.length; i++) {
+      let totalManufacturingCost = 0;
+      for (let i = 0; i < productInfo.length; i++) {   
+        const manufacturingCost = productInfo[i].data.data.map((v: any) => v.manufacturing_cost * dataQtde);     
         const mergeData = {
           ...productInfo[i].data.data,
           ...values,
+          valueManufacturing: manufacturingCost
         };
         allData.push(mergeData);
+        totalManufacturingCost += manufacturingCost.reduce((acc: number, val: number) => acc + val, 0);
       }
       setDataReport(allData)
+      setTotalManufacturingCost(totalManufacturingCost)
     } catch (error) {
       console.log(error);
     } finally {
@@ -239,22 +245,28 @@ export function Reports() {
               },
               {
                 title: "Custo de Produção",
-                dataIndex: "",
-                key: "",
-                render: ((text: any) => `R$ ${text[0]?.manufacturing_cost}`)
+                dataIndex: "valueManufacturing",
+                key: "valueManufacturing",
+                render: ((text: any) => `R$ ${text}`)
               },
             ]}
             dataSource={dataReport}
             size="small"
             scroll={{ x: "max-content" }}
             loading={isLoading}
+            footer={() => (
+              <div style={{fontSize: 15}}>
+                <strong>Qtde. Produção:</strong> {dataQtde} <strong>|</strong>
+                <strong> Custo de Produção Total:</strong> R$ {totalManufacturingCost} <strong>|</strong> 
+                <strong> Valor a ser Cobrado:</strong> R$ {totalManufacturingCost * 0.3 + totalManufacturingCost}
+              </div>
+            )}
           >
           </Table>
         </>
       ,
     },
   ];
-  console.log(dataReport);
 
   const items = steps.map((item) => ({ key: item.title, title: item.title }));
   const contentStyle: React.CSSProperties = {
