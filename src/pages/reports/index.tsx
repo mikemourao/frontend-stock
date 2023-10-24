@@ -128,6 +128,8 @@ export function Reports() {
     }
   };
 
+  const Vl = (totalManufacturingCost / dataQtde) * 1.3
+
   const steps = [
     {
       title: 'Simulação',
@@ -258,8 +260,8 @@ export function Reports() {
               <div style={{fontSize: 15}}>
                 <strong>Qtde. Prod.:</strong> {dataQtde} <strong>|</strong>
                 <strong> Custo Prod. Total:</strong> R$ {totalManufacturingCost} <strong>|</strong> 
-                <strong> Vl. por peça:</strong> R$ {totalManufacturingCost * 0.3 + totalManufacturingCost} <strong>|</strong>
-                <strong> Vl. Total(30%):</strong> R$ {(totalManufacturingCost * 0.3 + totalManufacturingCost)*dataQtde}
+                <strong>Vl. por peça:</strong> R$ {(totalManufacturingCost / dataQtde) * 1.3} <strong>|</strong> 
+                <strong> Vl. Total(30%):</strong> R$ {(Vl * dataQtde).toFixed(2)}
               </div>
             )}
           >
