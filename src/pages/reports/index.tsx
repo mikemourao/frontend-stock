@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Form, Input, Modal, Row, Select, Space, Steps, Table, Typography, message, theme } from "antd";
+import { Button, Col, Form, Input, Modal, Row, Select, Space, Steps, Table, Tag, Typography, notification, theme } from "antd";
 import { PlusOutlined, RedoOutlined, DeleteOutlined } from '@ant-design/icons';
 import { listProducts } from "../../services/products";
-import { getProductID } from "../../services/reports"
+import { getProductID, createReport, listReports } from "../../services/reports"
+import { format } from "date-fns";
 
 export function Reports() {
   const { token } = theme.useToken();
@@ -38,7 +39,7 @@ export function Reports() {
 
   useEffect(() => {
     setLoading(true);
-    listProducts()
+    listReports()
       .then((response) => {
         setReports(response.data);
         getProducts()
@@ -56,8 +57,8 @@ export function Reports() {
 
       const allData = [];
       let totalManufacturingCost = 0;
-      for (let i = 0; i < productInfo.length; i++) {   
-        const manufacturingCost = productInfo[i].data.data.map((v: any) => v.manufacturing_cost * dataQtde);     
+      for (let i = 0; i < productInfo.length; i++) {
+        const manufacturingCost = productInfo[i].data.data.map((v: any) => v.manufacturing_cost * dataQtde);
         const mergeData = {
           ...productInfo[i].data.data,
           ...values,
@@ -74,6 +75,30 @@ export function Reports() {
       setLoading(false);
     }
   };
+
+  const handleAddReport = async () => {
+    try {
+      setLoading(true);
+      const data: any = []
+      data.push({
+        report_name: dataReport[0]?.report_name,
+        product_name: dataReport.map((v: any) => ({ material: v[0]?.product_name })),
+        budget: (Vl * dataQtde).toFixed(2),
+        qtde: dataQtde
+      })
+
+      const response = await createReport(data[0]);
+      if (response.status === 200) {
+        notification.success({ message: "Salvo com sucesso!" })
+        setReload(!reload)
+        setLoading(false)
+        hideModal()
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  }
 
   const handleReload = () => {
     setReports([]);
@@ -257,10 +282,10 @@ export function Reports() {
             scroll={{ x: "max-content" }}
             loading={isLoading}
             footer={() => (
-              <div style={{fontSize: 15}}>
+              <div style={{ fontSize: 15 }}>
                 <strong>Qtde. Prod.:</strong> {dataQtde} <strong>|</strong>
-                <strong> Custo Prod. Total:</strong> R$ {totalManufacturingCost} <strong>|</strong> 
-                <strong>Vl. por peça:</strong> R$ {(totalManufacturingCost / dataQtde) * 1.3} <strong>|</strong> 
+                <strong> Custo Prod. Total:</strong> R$ {totalManufacturingCost} <strong>|</strong>
+                <strong>Vl. por peça:</strong> R$ {(totalManufacturingCost / dataQtde) * 1.3} <strong>|</strong>
                 <strong> Vl. Total(30%):</strong> R$ {(Vl * dataQtde).toFixed(2)}
               </div>
             )}
@@ -301,18 +326,41 @@ export function Reports() {
             key: "report_name",
           },
           {
+            title: "Materiais",
+            dataIndex: "product_name",
+            key: "product_name",
+            render: (text: any) => (
+              <>
+                {JSON.parse(text).map((text: any) => {
+                  let materials = `${text.material}`;
+                  return (
+                    <Tag color="magenta" key={materials}>
+                      {materials.toUpperCase()}
+                    </Tag>
+                  );
+                })}
+              </>
+            ),
+          },
+          {
             title: "Data de Criação",
             dataIndex: "created_at",
             key: "created_at",
+            render: (text: any) => format(new Date(text), "dd/MM/yyyy | h:mm:ss a")
           },
           {
-            title: "Orçamento",
+            title: "Qtde.",
+            dataIndex: "qtde",
+            key: "qtde",
+          },
+          {
+            title: "Orçamento (30%)",
             dataIndex: "budget",
             key: "budget",
             render: (text: any) => `R$ ${text}`
           },
         ]}
-        // dataSource={dataReports}
+        dataSource={dataReports}
         size="small"
         scroll={{ x: "max-content" }}
         loading={isLoading}
@@ -321,7 +369,7 @@ export function Reports() {
       <Modal
         open={isModal}
         onCancel={hideModal}
-        onOk={handleCreateReport}
+        onOk={handleAddReport}
         okText="Salvar"
         okButtonProps={{ style: { display: "none" } }}
         cancelButtonProps={{ style: { display: "none" } }}
@@ -340,15 +388,10 @@ export function Reports() {
               </Button>
             )}
             {current === steps.length - 1 && (
-              <Button type="primary" onClick={() => message.success('Processing complete!')}>
+              <Button type="primary" onClick={handleAddReport}>
                 Salvar
               </Button>
             )}
-            {/* {current > 0 && (
-              <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
-                Anterior
-              </Button>
-            )} */}
           </div>
         </>
       </Modal>
