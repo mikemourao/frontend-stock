@@ -83,7 +83,7 @@ export function Reports() {
       data.push({
         report_name: dataReport[0]?.report_name,
         product_name: dataReport.map((v: any) => ({ material: v[0]?.product_name })),
-        budget: (Vl * dataQtde).toFixed(2),
+        budget: (Vl * dataQtde + Number(Watts) + Number(dataQtde)).toFixed(2),
         qtde: dataQtde
       })
 
@@ -154,6 +154,7 @@ export function Reports() {
   };
 
   const Vl = (totalManufacturingCost / dataQtde) * 1.3
+  const Watts = Number(dataQtde * 0.0732).toFixed(2)
 
   const steps = [
     {
@@ -285,8 +286,10 @@ export function Reports() {
               <div style={{ fontSize: 15 }}>
                 <strong>Qtde. Prod.:</strong> {dataQtde} <strong>|</strong>
                 <strong> Custo Prod. Total:</strong> R$ {totalManufacturingCost} <strong>|</strong>
-                <strong>Vl. por peça:</strong> R$ {(totalManufacturingCost / dataQtde) * 1.3} <strong>|</strong>
-                <strong> Vl. Total(30%):</strong> R$ {(Vl * dataQtde).toFixed(2)}
+                <strong> Vl. por peça:</strong> R$ {((totalManufacturingCost / dataQtde) * 1.3).toFixed(2)} <strong>|</strong>
+                <strong> Mão de Obra:</strong> R$ {dataQtde} <strong>|</strong>
+                <strong> Energia:</strong> R$ {Watts} <strong>|</strong>
+                <strong> Vl. Total(30%):</strong> R$ {(Vl * dataQtde + Number(Watts) + Number(dataQtde)).toFixed(2)}
               </div>
             )}
           >
