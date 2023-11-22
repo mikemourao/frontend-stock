@@ -12,6 +12,10 @@ const AppRoutes = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       {
+        path: "/",
+        element: <Users />
+      },
+      {
         path: "/users",
         element: <Users />
       },

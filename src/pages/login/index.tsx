@@ -6,6 +6,7 @@ import keyUser from "../../assets/key_user.png";
 import { Grid } from 'antd';
 import { validateLogin } from "../../services/login";
 import { setEmployee, setToken } from '../../services/localStorage/localStorage';
+import Footer from '../../components/footer/index';
 
 const { useBreakpoint } = Grid;
 
@@ -94,8 +95,8 @@ export function Login() {
                         </Form.Item>
                     </Form>
                 </FormContent>
+                <Footer />
             </RightContent>
-
         </Container>
     )
 }

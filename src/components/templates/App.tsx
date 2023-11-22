@@ -7,6 +7,7 @@ import { Button, Popconfirm, Row, Spin } from 'antd';
 import { Outlet } from 'react-router-dom';
 import { Login } from '../../pages/login';
 import { clearLocalStorages } from '../../services/localStorage/localStorage';
+import Footer from '../../components/footer/index';
 
 const getUserToken = localStorage.getItem('@StockB:token');
 
@@ -45,6 +46,7 @@ export function App() {
                         <Content>
                             <Outlet />
                         </Content>
+                        <Footer />
                     </LayoutBody>
                 </Container>
             </Spin>
