@@ -1,7 +1,7 @@
 import axios from 'axios'
 // import { getToken } from '../services/LocalStorage'
 
-const baseUrl = import.meta.env.VITE_API_URL
+const baseUrl = 'https://backend-stock.vercel.app/'
 const apiNode = axios.create({ baseURL: baseUrl })
 
 // apiNode.interceptors.request.use((config) => {
