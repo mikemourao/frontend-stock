@@ -216,7 +216,7 @@ export function Reports() {
                                   fetchProductInfo(productId);
                                 }}
                               >
-                                {dataProduct.map((a: any, b: any) => (
+                                {dataProduct.map((a: any) => (
                                   <Select.Option value={a["id"]} key={a["id"]}>
                                     {a["value"]}
                                   </Select.Option>

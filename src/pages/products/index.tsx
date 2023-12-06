@@ -116,7 +116,7 @@ export function Products() {
                         dataIndex: "options",
                         key: "options",
                         align: "center",
-                        render: (text: any, record: any) => {
+                        render: (record: any) => {
                           return (
                             <IconWrapperCenter>
                               <Popconfirm
